@@ -1,0 +1,11 @@
+[
+    {
+      "Name": "Kira","Type": "dog","Age": 8,"Color": "red"
+    },
+    {
+      "Name": "Milo","Type": "cat","Age": 3,"Color": "gray/white"
+    },
+    {
+      "Name": "Summer","Type": "cat","Age": 1,"Color": "black/white"
+    }
+  ]

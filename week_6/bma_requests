@@ -1,0 +1,59 @@
+import requests
+import cloudscraper
+from bs4 import BeautifulSoup
+import time
+import csv
+
+links = []
+i = 1
+
+while i <= 1:
+    time.sleep(0.25)
+    page_url = f"https://collection.artbma.org/objects/images?page={i}&perpage=10"
+    i+=1
+    page = requests.get(page_url)
+    soup = BeautifulSoup(page.text, 'html.parser')
+    scraper = cloudscraper.create_scraper()
+    page = scraper.get(page_url)
+    
+    primary_media_elements = soup.find_all('div', "primaryMedia img-wrap")
+    
+    for div_elem in primary_media_elements:
+        link_elem = div_elem.find('a')
+        print(link_elem.attrs['href'])
+        link = link_elem.attrs['href']
+        links.append(link)
+
+print(len(links))
+
+title = soup.find('h1').text
+print(title)
+
+art_result = []
+for link in links:
+    time.sleep(0.25)
+    art_url = f"https://collection.artbma.org{link}"
+    print(art_url)
+    page = requests.get(art_url)
+    print(page)
+    soup = BeautifulSoup(page.text, 'html.parser')
+
+    title = soup.find('h1'). text
+    artist_area = soup.find('div', {'class': 'detailField peopleField'})
+    artist_name = artist_area.find('span', {'itemprop': 'name'}).text.strip()
+
+    art_dict = {
+        'title': title,
+        'artist': artist_name,
+        # 'date': date,
+        # 'medium': medium,
+    }
+    print(art_dict)
+    art_result.append(art_dict)
+print(art_result[0].keys())
+
+with open('bma_art_in_class.csv', 'w') as file:
+    csv_file = csv.DictWriter(file, fieldnames=art_result[0].keys())
+    csv_file.writeheader()
+    csv_file.writerows(art_result)             
+#command slash helps to turn code into note
